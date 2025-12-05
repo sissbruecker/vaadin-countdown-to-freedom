@@ -44,7 +44,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
                 "duration-500",
                 "ease-out"
         );
-        
+
         Div header = new Div();
         header.addClassNames(
                 "flex",
@@ -80,6 +80,17 @@ public class MainView extends Div implements HasUrlParameter<String> {
         });
         Signal<Boolean> hasHolidaysSignal = holidaysSignal.map(holidays -> !holidays.isEmpty());
         Signal<Boolean> hasNoHolidaysSignal = holidaysSignal.map(List::isEmpty);
+
+        // Update settings when the query changes
+        ComponentEffect.effect(this, () -> {
+            HolidayQuery query = holidayQuerySignal.value();
+            if (query != null) {
+                availableCountries.stream()
+                        .filter(c -> c.countryCode().equalsIgnoreCase(query.countryCode()))
+                        .findFirst()
+                        .ifPresent(country -> settings.setValues(country, query.year()));
+            }
+        });
 
         // Update holidays
         ComponentEffect.effect(this, () -> {
