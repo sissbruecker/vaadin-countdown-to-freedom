@@ -1,12 +1,17 @@
 /* Add your styles here */
 html {
+  /* Light purple background */
   --aura-background-color-light: oklch(0.933 0.037 299.201);
+  /* Yellow background */
+  --aura-background-color-light: oklch(0.936 0.053 76.234);
+  /* Blue background */
+  --aura-background-color-light: oklch(0.893 0.053 251.879);
+  
   scrollbar-gutter: stable;
 }
 
 vaadin-grid::part(holiday-passed) {
-  color: var(--vaadin-text-color-secondary);
-  --vaadin-grid-cell-background-color: var(--vaadin-background-container);
+  opacity: .6;
 }
 
 .aura-badge {

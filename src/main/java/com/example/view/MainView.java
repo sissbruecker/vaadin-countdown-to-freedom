@@ -13,6 +13,8 @@ import com.example.service.HolidayApiClient;
 import com.example.util.Helpers;
 
 import com.vaadin.flow.component.ComponentEffect;
+import com.vaadin.flow.component.card.Card;
+import com.vaadin.flow.component.card.CardVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -125,28 +127,23 @@ public class MainView extends Div implements HasUrlParameter<String> {
         Optional<Holiday> nextHoliday = Helpers.findNextHoliday(holidays);
 
         nextHoliday.ifPresent(holiday -> {
-            Div wrapper = new Div();
-            wrapper.addClassNames("mb-8");
-
-            H2 title = new H2("Next Holiday");
-            title.addClassNames("mb-2");
-
-            wrapper.add(title, new NextHolidayCard(holiday));
-            holidaysContainer.add(wrapper);
+            holidaysContainer.add(new NextHolidayCard(holiday));
         });
     }
 
     private void renderAllHolidays(List<Holiday> holidays) {
-        Div wrapper = new Div();
-        wrapper.addClassNames("mb-8");
-
         H2 title = new H2("All Holidays");
-        title.addClassNames("mb-2");
+        title.addClassNames("p-4");
 
         HolidayGrid grid = new HolidayGrid();
         grid.setHolidays(holidays);
+        grid.getStyle().setBorderRadius("0").set("border", "none").set("border-top", "1px solid var(--vaadin-border-color-secondary)");
 
-        wrapper.add(title, grid);
-        holidaysContainer.add(wrapper);
+        Card card = new Card();
+        card.addThemeVariants(CardVariant.AURA_ELEVATED);
+        card.addClassNames("p-0", "overflow-hidden");
+        card.add(title, grid);
+
+        holidaysContainer.add(card);
     }
 }
