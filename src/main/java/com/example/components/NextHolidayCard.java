@@ -14,7 +14,6 @@ public class NextHolidayCard extends Card {
 
     public NextHolidayCard(Holiday holiday) {
         addThemeVariants(CardVariant.AURA_ELEVATED);
-        addClassNames("mb-6");
 
         long daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), holiday.getDate());
 
