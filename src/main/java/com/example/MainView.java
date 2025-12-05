@@ -2,6 +2,9 @@ package com.example;
 
 import com.example.model.Country;
 import com.example.service.HolidayApiClient;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -17,6 +20,7 @@ public class MainView extends Div {
     private final HolidayApiClient holidayApiClient;
     private final ComboBox<Country> countryComboBox;
     private final Select<Integer> yearSelect;
+    private final Button viewHolidaysButton;
 
     public MainView(HolidayApiClient holidayApiClient) {
         this.holidayApiClient = holidayApiClient;
@@ -36,7 +40,24 @@ public class MainView extends Div {
         yearSelect.setValue(currentYear);
         yearSelect.setWidth("150px");
 
-        HorizontalLayout controls = new HorizontalLayout(countryComboBox, yearSelect);
+        viewHolidaysButton = new Button("View Holidays");
+        viewHolidaysButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        viewHolidaysButton.setEnabled(false);
+        viewHolidaysButton.addClassName("mt-6");
+
+        countryComboBox.addValueChangeListener(event ->
+            viewHolidaysButton.setEnabled(event.getValue() != null)
+        );
+
+        viewHolidaysButton.addClickListener(event -> {
+            Country selectedCountry = countryComboBox.getValue();
+            Integer selectedYear = yearSelect.getValue();
+            if (selectedCountry != null && selectedYear != null) {
+                UI.getCurrent().navigate("holidays/" + selectedCountry.countryCode() + "/" + selectedYear);
+            }
+        });
+
+        HorizontalLayout controls = new HorizontalLayout(countryComboBox, yearSelect, viewHolidaysButton);
         controls.addClassName("gap-4");
 
         add(controls);
