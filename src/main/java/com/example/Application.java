@@ -1,5 +1,6 @@
 package com.example;
 
+import com.vaadin.flow.component.page.ColorScheme;
 import com.vaadin.flow.theme.aura.Aura;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.page.AppShellConfigurator;
 @SpringBootApplication
 @StyleSheet(Aura.STYLESHEET) // Use Aura.STYLESHEET to use Aura instead
 @StyleSheet("styles.css") // Your custom styles
+@ColorScheme(ColorScheme.Value.LIGHT_DARK)
 public class Application implements AppShellConfigurator {
 
     public static void main(String[] args) {

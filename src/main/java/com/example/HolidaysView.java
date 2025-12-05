@@ -12,6 +12,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -48,10 +49,7 @@ public class HolidaysView extends Div implements HasUrlParameter<String> {
         grid.addColumn(new ComponentRenderer<>(holiday -> holiday.getGlobal() ? new SvgIcon("icons/check.svg") : new Span()))
                 .setHeader("National")
                 .setAutoWidth(true);
-        grid.addColumn(holiday -> {
-            List<String> counties = holiday.getCounties();
-            return (counties != null && !counties.isEmpty()) ? String.join(", ", counties) : "";
-        })
+        grid.addColumn(new ComponentRenderer<>(this::createCountyBadges))
                 .setHeader("Counties")
                 .setAutoWidth(true)
                 .setFlexGrow(1);
@@ -83,5 +81,19 @@ public class HolidaysView extends Div implements HasUrlParameter<String> {
             List<Holiday> holidays = holidayApiClient.getPublicHolidays(year, countryCode);
             grid.setItems(holidays);
         }
+    }
+    
+    private HorizontalLayout createCountyBadges(Holiday holiday) {
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setSpacing(true);
+        if (holiday.getCounties() != null) {
+            for (String county : holiday.getCounties()) {
+                String countyId = county.contains("-") ? county.split("-")[1] : county;
+                Span badge = new Span(countyId);
+                badge.addClassNames("aura-badge");
+                layout.add(badge);
+            }
+        }
+        return layout;
     }
 }

@@ -1,5 +1,27 @@
 /* Add your styles here */
+html {
+  --aura-background-color-light: oklch(0.931 0.018 296.621);
+}
+
 vaadin-grid::part(holiday-passed) {
   color: var(--vaadin-text-color-secondary);
-  background: var(--vaadin-background-container);
+  --vaadin-grid-cell-background-color: var(--vaadin-background-container);
+}
+
+.aura-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25em;
+  font-size: var(--aura-font-size-s);
+  font-weight: var(--aura-font-weight-medium);
+  height: calc(1lh - 2px);
+  border: 1px solid var(--aura-accent-border-color);
+  background: var(--aura-accent-surface) padding-box;
+  background-clip: padding-box;
+  color: var(--aura-accent-text-color);
+  padding: 0 0.5em;
+  border-radius: var(--vaadin-radius-l);
+  min-width: calc(1lh - 1em - 2px);
+  --vaadin-icon-size: 0.75lh;
 }
