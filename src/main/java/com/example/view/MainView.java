@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.example.components.HolidayGrid;
 import com.example.components.HolidaySettings;
 import com.example.components.NextHolidayCard;
+import com.example.components.ThemeSwitcher;
 import com.example.model.Country;
 import com.example.model.Holiday;
 import com.example.model.HolidayQuery;
@@ -36,8 +37,11 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
     public MainView(HolidayApiClient holidayApiClient) {
         this.availableCountries = holidayApiClient.getAvailableCountries();
+        
+        add(new ThemeSwitcher());
 
-        addClassNames(
+        Div container = new Div();
+        container.addClassNames(
                 "max-w-[800px]",
                 "mx-auto",
                 "p-8",
@@ -61,7 +65,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
         header.add(heading, paragraph, settings);
         header.addClassNames("mb-8");
-        add(header);
+        container.add(header);
 
         holidaysContainer = new Div();
         holidaysContainer.addClassNames(
@@ -69,7 +73,9 @@ public class MainView extends Div implements HasUrlParameter<String> {
                 "duration-500",
                 "ease-out"
         );
-        add(holidaysContainer);
+        container.add(holidaysContainer);
+        
+        add(container);
 
         // Compute holidays based on the current holiday query
         Signal<List<Holiday>> holidaysSignal = Signal.computed(() -> {
@@ -101,8 +107,8 @@ public class MainView extends Div implements HasUrlParameter<String> {
         });
 
         // Animation
-        getElement().getClassList().bind("transform-[translate(0px,25vh)]", hasNoHolidaysSignal);
-        getElement().getClassList().bind("transform-[translate(0px,0px)]", hasHolidaysSignal);
+        container.getElement().getClassList().bind("transform-[translate(0px,25vh)]", hasNoHolidaysSignal);
+        container.getElement().getClassList().bind("transform-[translate(0px,0px)]", hasHolidaysSignal);
         holidaysContainer.getElement().getClassList().bind("opacity-0", hasNoHolidaysSignal);
         holidaysContainer.getElement().getClassList().bind("opacity-100", hasHolidaysSignal);
     }

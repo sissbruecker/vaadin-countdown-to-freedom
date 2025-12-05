@@ -1,13 +1,22 @@
 /* Add your styles here */
 html {
-  /* Light purple background */
   --aura-background-color-light: oklch(0.933 0.037 299.201);
-  /* Yellow background */
-  --aura-background-color-light: oklch(0.936 0.053 76.234);
-  /* Blue background */
-  --aura-background-color-light: oklch(0.893 0.053 251.879);
-  
+  --aura-accent-color-light: var(--aura-purple);
+  --aura-accent-color-dark: var(--aura-purple);
+
   scrollbar-gutter: stable;
+}
+
+html[data-app-theme="yellow"] {
+  --aura-background-color-light: oklch(0.936 0.053 76.234);
+  --aura-accent-color-light: var(--aura-purple);
+  --aura-accent-color-dark: var(--aura-purple);
+}
+
+html[data-app-theme="blue"] {
+  --aura-background-color-light: oklch(0.893 0.053 251.879);
+  --aura-accent-color-light: var(--aura-blue);
+  --aura-accent-color-dark: var(--aura-blue);
 }
 
 vaadin-grid::part(holiday-passed) {
