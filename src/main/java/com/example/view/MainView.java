@@ -106,7 +106,6 @@ public class MainView extends Div implements HasUrlParameter<String> {
             return;
         }
 
-        addClassName("loaded");
         renderNextHoliday(holidays);
         renderAllHolidays(holidays);
     }

@@ -18,7 +18,7 @@ public class NextHolidayCard extends Card {
         long daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), holiday.getDate());
 
         Paragraph holidayName = new Paragraph(holiday.getLocalName());
-        holidayName.addClassNames("font-bold", "m-0", "mb-1");
+        holidayName.addClassNames("font-bold", "m-0", "mb-2");
 
         Paragraph holidayDate = new Paragraph(
                 holiday.getDate().format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"))
