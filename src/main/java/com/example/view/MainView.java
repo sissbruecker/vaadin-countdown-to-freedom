@@ -1,7 +1,9 @@
-package com.example;
+package com.example.view;
 
 import com.example.model.Country;
 import com.example.service.HolidayApiClient;
+import com.example.util.Helpers;
+
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -27,8 +29,10 @@ public class MainView extends Div {
     private final Button viewHolidaysButton;
 
     public MainView(HolidayApiClient holidayApiClient) {
-
-        addClassNames("flex", "items-center", "justify-center", "h-screen");
+        addClassNames("p-8");
+        
+        Div container = new Div();
+        container.addClassNames("container");
 
         List<Country> availableCountries = holidayApiClient.getAvailableCountries();
 
@@ -63,8 +67,8 @@ public class MainView extends Div {
             }
         });
 
-        Div contents = new Div();
-        contents.addClassNames("inline-flex", "flex-col");
+        Div header = new Div();
+        header.addClassNames("inline-flex", "flex-col");
         H1 heading = new H1("Countdown to Freedom");
         heading.addClassName("text-xl");
         Paragraph paragraph = new Paragraph("When is the next public holiday?");
@@ -72,31 +76,16 @@ public class MainView extends Div {
         HorizontalLayout controls = new HorizontalLayout(countryComboBox, yearSelect, viewHolidaysButton);
         controls.addClassNames("gap-4", "items-baseline");
         
-        contents.add(heading, paragraph, controls);
-        add(contents);
+        header.add(heading, paragraph, controls);
+        container.add(header);
+        
+        add(container);
     }
 
     private void detectAndSetCountry(List<Country> availableCountries) {
-        VaadinRequest request = VaadinRequest.getCurrent();
-        if (request == null) {
-            return;
-        }
-
-        Locale locale = request.getLocale();
-        if (locale == null) {
-            return;
-        }
-
-        String countryCode = locale.getCountry() != null && !locale.getCountry().isEmpty()
-                ? locale.getCountry()
-                : locale.getLanguage();
-
-        availableCountries.stream()
-                .filter(country -> country.countryCode().equalsIgnoreCase(countryCode))
-                .findFirst()
-                .ifPresent(country -> {
-                    countryComboBox.setValue(country);
-                    viewHolidaysButton.setEnabled(true);
-                });
+        Helpers.detectCountry(availableCountries).ifPresent(country -> {
+            countryComboBox.setValue(country);
+            viewHolidaysButton.setEnabled(true);
+        });
     }
 }

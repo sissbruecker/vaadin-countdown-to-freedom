@@ -3,6 +3,12 @@ html {
   --aura-background-color-light: oklch(0.931 0.018 296.621);
 }
 
+.container {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 vaadin-grid::part(holiday-passed) {
   color: var(--vaadin-text-color-secondary);
   --vaadin-grid-cell-background-color: var(--vaadin-background-container);
