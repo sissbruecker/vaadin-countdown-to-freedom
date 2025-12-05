@@ -10,30 +10,30 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinRequest;
 
 import java.time.Year;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.IntStream;
-
-import static com.vaadin.flow.component.Tag.H1;
 
 @Route("")
 public class MainView extends Div {
 
-    private final HolidayApiClient holidayApiClient;
     private final ComboBox<Country> countryComboBox;
     private final Select<Integer> yearSelect;
     private final Button viewHolidaysButton;
 
     public MainView(HolidayApiClient holidayApiClient) {
-        this.holidayApiClient = holidayApiClient;
 
         addClassNames("flex", "items-center", "justify-center", "h-screen");
 
+        List<Country> availableCountries = holidayApiClient.getAvailableCountries();
+
         countryComboBox = new ComboBox<>("Country");
-        countryComboBox.setItems(holidayApiClient.getAvailableCountries());
+        countryComboBox.setItems(availableCountries);
         countryComboBox.setItemLabelGenerator(country -> country.name() + " (" + country.countryCode() + ")");
         countryComboBox.setPlaceholder("Select a country");
         countryComboBox.setWidth("250px");
@@ -48,6 +48,8 @@ public class MainView extends Div {
         viewHolidaysButton = new Button("View Holidays");
         viewHolidaysButton.addThemeVariants(ButtonVariant.AURA_PRIMARY);
         viewHolidaysButton.setEnabled(false);
+
+        detectAndSetCountry(availableCountries);
 
         countryComboBox.addValueChangeListener(event ->
             viewHolidaysButton.setEnabled(event.getValue() != null)
@@ -72,5 +74,29 @@ public class MainView extends Div {
         
         contents.add(heading, paragraph, controls);
         add(contents);
+    }
+
+    private void detectAndSetCountry(List<Country> availableCountries) {
+        VaadinRequest request = VaadinRequest.getCurrent();
+        if (request == null) {
+            return;
+        }
+
+        Locale locale = request.getLocale();
+        if (locale == null) {
+            return;
+        }
+
+        String countryCode = locale.getCountry() != null && !locale.getCountry().isEmpty()
+                ? locale.getCountry()
+                : locale.getLanguage();
+
+        availableCountries.stream()
+                .filter(country -> country.countryCode().equalsIgnoreCase(countryCode))
+                .findFirst()
+                .ifPresent(country -> {
+                    countryComboBox.setValue(country);
+                    viewHolidaysButton.setEnabled(true);
+                });
     }
 }
