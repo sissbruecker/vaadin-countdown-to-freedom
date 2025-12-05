@@ -1,7 +1,6 @@
 package com.example.view;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import com.example.components.HolidayGrid;
@@ -9,9 +8,11 @@ import com.example.components.HolidaySettings;
 import com.example.components.NextHolidayCard;
 import com.example.model.Country;
 import com.example.model.Holiday;
+import com.example.model.HolidayQuery;
 import com.example.service.HolidayApiClient;
 import com.example.util.Helpers;
 
+import com.vaadin.flow.component.ComponentEffect;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -19,40 +20,42 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
-import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
+import com.vaadin.signals.ReferenceSignal;
+import com.vaadin.signals.Signal;
 
 @Route("")
 public class MainView extends Div implements HasUrlParameter<String> {
 
-    private final HolidayApiClient holidayApiClient;
     private final List<Country> availableCountries;
-    private final Div header;
     private final Div holidaysContainer;
-    private final HolidaySettings settings;
-    private List<Holiday> holidays;
+
+    private final ReferenceSignal<HolidayQuery> holidayQuerySignal = new ReferenceSignal<>();
 
     public MainView(HolidayApiClient holidayApiClient) {
-        this.holidayApiClient = holidayApiClient;
         this.availableCountries = holidayApiClient.getAvailableCountries();
 
         addClassNames("max-w-[800px]", "mx-auto", "p-8", "pt-16");
+        
+        Div spacer = new Div();
+        spacer.addClassNames(
+                "transition-[height]",
+                "duration-500",
+                "ease-out"
+        );
+        add(spacer);
 
-        header = new Div();
+        Div header = new Div();
         header.addClassNames(
                 "flex",
                 "flex-col",
-                "justify-end",
-                "min-h-[40vh]",
-                "transition-[min-height]",
-                "duration-500",
-                "ease-in-out"
+                "justify-end"
         );
         H1 heading = new H1("Countdown to Freedom");
         heading.addClassName("text-xl");
         Paragraph paragraph = new Paragraph("When is the next public holiday?");
 
-        settings = new HolidaySettings(availableCountries);
+        HolidaySettings settings = new HolidaySettings(availableCountries);
 
         header.add(heading, paragraph, settings);
         header.addClassNames("mb-8");
@@ -60,58 +63,50 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
         holidaysContainer = new Div();
         holidaysContainer.addClassNames(
-                "opacity-0",
                 "transition-[opacity]",
                 "duration-500",
-                "ease-in-out"
+                "ease-out"
         );
         add(holidaysContainer);
+
+        // Compute holidays based on the current holiday query
+        Signal<List<Holiday>> holidaysSignal = Signal.computed(() -> {
+            HolidayQuery query = holidayQuerySignal.value();
+            if (query != null) {
+                return holidayApiClient.getPublicHolidays(query.year(), query.countryCode());
+            } else {
+                return List.of();
+            }
+        });
+        Signal<Boolean> hasHolidaysSignal = holidaysSignal.map(holidays -> !holidays.isEmpty());
+        Signal<Boolean> hasNoHolidaysSignal = holidaysSignal.map(List::isEmpty);
+
+        // Update holidays
+        ComponentEffect.effect(this, () -> {
+            List<Holiday> holidays = holidaysSignal.value();
+            renderHolidays(holidays);
+        });
+
+        // Animate based on holidays presence
+        spacer.getElement().getClassList().bind("h-[25vh]", hasNoHolidaysSignal);
+        spacer.getElement().getClassList().bind("h-0", hasHolidaysSignal);
+        holidaysContainer.getElement().getClassList().bind("opacity-0", hasNoHolidaysSignal);
+        holidaysContainer.getElement().getClassList().bind("opacity-100", hasHolidaysSignal);
     }
 
     @Override
     public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
-        QueryParameters queryParameters = event.getLocation().getQueryParameters();
-        Map<String, List<String>> params = queryParameters.getParameters();
-
-        String countryCode = params.containsKey("country") ? params.get("country").get(0) : null;
-        String yearParam = params.containsKey("year") ? params.get("year").get(0) : null;
-
-        holidays = List.of();
-
-        if (countryCode != null && yearParam != null) {
-            try {
-                int year = Integer.parseInt(yearParam);
-
-                Optional<Country> country = availableCountries.stream()
-                        .filter(c -> c.countryCode().equalsIgnoreCase(countryCode))
-                        .findFirst();
-
-                if (country.isPresent()) {
-                    holidays = holidayApiClient.getPublicHolidays(year, countryCode);
-                    settings.setValues(country.get(), year);
-                }
-            } catch (NumberFormatException e) {
-                // Invalid year parameter, ignore
-            }
-        }
-
-        renderData();
+        holidayQuerySignal.value(Helpers.parseQuery(availableCountries, event).orElse(null));
     }
 
-    private void renderData() {
-        header.removeClassNames("min-h-[40vh]", "min-h-0");
-        holidaysContainer.removeClassNames("opacity-0", "opacity-100");
+    private void renderHolidays(List<Holiday> holidays) {
         holidaysContainer.removeAll();
 
         if (holidays.isEmpty()) {
-            header.addClassNames("min-h-[40vh]");
-            holidaysContainer.addClassNames("opacity-0");
             return;
         }
 
         addClassName("loaded");
-        header.addClassName("min-h-0");
-        holidaysContainer.addClassNames("opacity-100");
         renderNextHoliday(holidays);
         renderAllHolidays(holidays);
     }
