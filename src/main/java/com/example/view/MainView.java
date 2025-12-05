@@ -35,16 +35,16 @@ public class MainView extends Div implements HasUrlParameter<String> {
     public MainView(HolidayApiClient holidayApiClient) {
         this.availableCountries = holidayApiClient.getAvailableCountries();
 
-        addClassNames("max-w-[800px]", "mx-auto", "p-8", "pt-16");
-        
-        Div spacer = new Div();
-        spacer.addClassNames(
-                "transition-[height]",
+        addClassNames(
+                "max-w-[800px]",
+                "mx-auto",
+                "p-8",
+                "pt-16",
+                "transition-[transform]",
                 "duration-500",
                 "ease-out"
         );
-        add(spacer);
-
+        
         Div header = new Div();
         header.addClassNames(
                 "flex",
@@ -87,9 +87,9 @@ public class MainView extends Div implements HasUrlParameter<String> {
             renderHolidays(holidays);
         });
 
-        // Animate based on holidays presence
-        spacer.getElement().getClassList().bind("h-[25vh]", hasNoHolidaysSignal);
-        spacer.getElement().getClassList().bind("h-0", hasHolidaysSignal);
+        // Animation
+        getElement().getClassList().bind("transform-[translate(0px,25vh)]", hasNoHolidaysSignal);
+        getElement().getClassList().bind("transform-[translate(0px,0px)]", hasHolidaysSignal);
         holidaysContainer.getElement().getClassList().bind("opacity-0", hasNoHolidaysSignal);
         holidaysContainer.getElement().getClassList().bind("opacity-100", hasHolidaysSignal);
     }
