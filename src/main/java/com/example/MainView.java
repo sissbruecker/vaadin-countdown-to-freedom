@@ -62,12 +62,13 @@ public class MainView extends Div {
         });
 
         Div contents = new Div();
-        contents.setClassName("inline-flex flex-col");
+        contents.addClassNames("inline-flex", "flex-col");
         H1 heading = new H1("Countdown to Freedom");
+        heading.addClassName("text-xl");
         Paragraph paragraph = new Paragraph("When is the next public holiday?");
 
         HorizontalLayout controls = new HorizontalLayout(countryComboBox, yearSelect, viewHolidaysButton);
-        controls.setClassName("gap-4 items-baseline");
+        controls.addClassNames("gap-4", "items-baseline");
         
         contents.add(heading, paragraph, controls);
         add(contents);
