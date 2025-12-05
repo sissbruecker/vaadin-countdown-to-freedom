@@ -23,12 +23,10 @@ public class NextHolidayCard extends Card {
         Paragraph holidayDate = new Paragraph(
                 holiday.getDate().format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy"))
         );
-        holidayDate.addClassNames("m-0", "mb-2");
-        holidayDate.getStyle().setColor("var(--vaadin-text-color-secondary)");
+        holidayDate.addClassNames("m-0", "mb-2", "text-[var(--vaadin-text-color-secondary)]");
 
         Paragraph countdown = new Paragraph();
-        countdown.addClassNames("m-0", "font-semibold");
-        countdown.getStyle().setColor("var(--aura-accent-text-color)");
+        countdown.addClassNames("m-0", "font-semibold", "text-[var(--aura-accent-text-color)]");
         if (daysUntil == 0) {
             countdown.setText("Today!");
         } else if (daysUntil == 1) {

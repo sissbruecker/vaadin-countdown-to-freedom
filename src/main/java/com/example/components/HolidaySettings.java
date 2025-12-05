@@ -35,7 +35,6 @@ public class HolidaySettings extends HorizontalLayout {
         yearSelect.setLabel("Year");
         yearSelect.setItems(IntStream.range(currentYear, currentYear + 5).boxed().toList());
         yearSelect.setValue(currentYear);
-        yearSelect.setWidth("150px");
 
         viewHolidaysButton = new Button("View Holidays");
         viewHolidaysButton.addThemeVariants(ButtonVariant.AURA_PRIMARY);

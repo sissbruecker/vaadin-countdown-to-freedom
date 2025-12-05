@@ -27,6 +27,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
     private final HolidayApiClient holidayApiClient;
     private final List<Country> availableCountries;
+    private final Div header;
     private final Div holidaysContainer;
     private final HolidaySettings settings;
     private List<Holiday> holidays;
@@ -35,10 +36,18 @@ public class MainView extends Div implements HasUrlParameter<String> {
         this.holidayApiClient = holidayApiClient;
         this.availableCountries = holidayApiClient.getAvailableCountries();
 
-        addClassNames("main", "p-8", "pt-16");
+        addClassNames("max-w-[800px]", "mx-auto", "p-8", "pt-16");
 
-        Div header = new Div();
-        header.addClassNames("header", "mb-8");
+        header = new Div();
+        header.addClassNames(
+                "flex",
+                "flex-col",
+                "justify-end",
+                "min-h-[40vh]",
+                "transition-[min-height]",
+                "duration-500",
+                "ease-in-out"
+        );
         H1 heading = new H1("Countdown to Freedom");
         heading.addClassName("text-xl");
         Paragraph paragraph = new Paragraph("When is the next public holiday?");
@@ -46,10 +55,16 @@ public class MainView extends Div implements HasUrlParameter<String> {
         settings = new HolidaySettings(availableCountries);
 
         header.add(heading, paragraph, settings);
+        header.addClassNames("mb-8");
         add(header);
 
         holidaysContainer = new Div();
-        holidaysContainer.addClassNames("data");
+        holidaysContainer.addClassNames(
+                "opacity-0",
+                "transition-[opacity]",
+                "duration-500",
+                "ease-in-out"
+        );
         add(holidaysContainer);
     }
 
@@ -60,7 +75,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
         String countryCode = params.containsKey("country") ? params.get("country").get(0) : null;
         String yearParam = params.containsKey("year") ? params.get("year").get(0) : null;
-        
+
         holidays = List.of();
 
         if (countryCode != null && yearParam != null) {
@@ -79,19 +94,24 @@ public class MainView extends Div implements HasUrlParameter<String> {
                 // Invalid year parameter, ignore
             }
         }
-        
+
         renderData();
     }
-    
+
     private void renderData() {
+        header.removeClassNames("min-h-[40vh]", "min-h-0");
+        holidaysContainer.removeClassNames("opacity-0", "opacity-100");
         holidaysContainer.removeAll();
-        removeClassName("loaded");
-        
+
         if (holidays.isEmpty()) {
+            header.addClassNames("min-h-[40vh]");
+            holidaysContainer.addClassNames("opacity-0");
             return;
         }
-        
+
         addClassName("loaded");
+        header.addClassName("min-h-0");
+        holidaysContainer.addClassNames("opacity-100");
         renderNextHoliday(holidays);
         renderAllHolidays(holidays);
     }
@@ -102,7 +122,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
         nextHoliday.ifPresent(holiday -> {
             Div wrapper = new Div();
             wrapper.addClassNames("mb-8");
-            
+
             H2 title = new H2("Next Holiday");
             title.addClassNames("mb-2");
 
@@ -114,7 +134,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
     private void renderAllHolidays(List<Holiday> holidays) {
         Div wrapper = new Div();
         wrapper.addClassNames("mb-8");
-        
+
         H2 title = new H2("All Holidays");
         title.addClassNames("mb-2");
 
