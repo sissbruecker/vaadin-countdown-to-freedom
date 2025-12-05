@@ -1,12 +1,36 @@
 /* Add your styles here */
 html {
   --aura-background-color-light: oklch(0.931 0.018 296.621);
+  scrollbar-gutter: stable;
 }
 
-.container {
+.main {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.header {
+  min-height: calc(40vh);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: min-height 500ms ease-in-out;
+}
+
+.data {
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+}
+
+.main.loaded {
+  .header {
+    min-height: 0;
+  }
+
+  .data {
+    opacity: 1;
+  }
 }
 
 vaadin-grid::part(holiday-passed) {

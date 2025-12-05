@@ -34,13 +34,10 @@ public class MainView extends Div implements HasUrlParameter<String> {
         this.holidayApiClient = holidayApiClient;
         this.availableCountries = holidayApiClient.getAvailableCountries();
 
-        addClassNames("p-8");
-
-        Div container = new Div();
-        container.addClassNames("container");
+        addClassNames("main", "p-8", "pt-16");
 
         Div header = new Div();
-        header.addClassNames("mb-8");
+        header.addClassNames("header", "mb-8");
         H1 heading = new H1("Countdown to Freedom");
         heading.addClassName("text-xl");
         Paragraph paragraph = new Paragraph("When is the next public holiday?");
@@ -48,12 +45,11 @@ public class MainView extends Div implements HasUrlParameter<String> {
         settings = new HolidaySettings(availableCountries);
 
         header.add(heading, paragraph, settings);
-        container.add(header);
+        add(header);
 
         holidaysContainer = new Div();
-        container.add(holidaysContainer);
-
-        add(container);
+        holidaysContainer.addClassNames("data");
+        add(holidaysContainer);
     }
 
     @Override
@@ -75,6 +71,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
                 if (country.isPresent()) {
                     settings.setValues(country.get(), year);
                     loadHolidays(countryCode, year);
+                    addClassName("loaded");
                 }
             } catch (NumberFormatException e) {
                 // Invalid year parameter, ignore
