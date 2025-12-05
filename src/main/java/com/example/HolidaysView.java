@@ -1,18 +1,22 @@
 package com.example;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import com.example.model.Holiday;
 import com.example.service.HolidayApiClient;
+
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.data.renderer.IconRenderer;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.WildcardParameter;
-
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Route("holidays")
 public class HolidaysView extends Div implements HasUrlParameter<String> {
@@ -33,13 +37,15 @@ public class HolidaysView extends Div implements HasUrlParameter<String> {
 
         grid = new Grid<>(Holiday.class, false);
         grid.setAllRowsVisible(true);
+        grid.setSelectionMode(Grid.SelectionMode.NONE);
+        grid.setPartNameGenerator(holiday -> holiday.getDate().isBefore(LocalDate.now()) ? "holiday-passed" : null);
         grid.addColumn(holiday -> holiday.getDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy")))
                 .setHeader("Date")
                 .setAutoWidth(true);
         grid.addColumn(Holiday::getLocalName)
                 .setHeader("Name")
                 .setAutoWidth(true);
-        grid.addColumn(holiday -> Boolean.TRUE.equals(holiday.getGlobal()) ? "Yes" : "No")
+        grid.addColumn(new ComponentRenderer<>(holiday -> holiday.getGlobal() ? new SvgIcon("icons/check.svg") : new Span()))
                 .setHeader("National")
                 .setAutoWidth(true);
         grid.addColumn(holiday -> {

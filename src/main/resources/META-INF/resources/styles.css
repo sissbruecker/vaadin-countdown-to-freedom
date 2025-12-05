@@ -1,1 +1,5 @@
 /* Add your styles here */
+vaadin-grid::part(holiday-passed) {
+  color: var(--vaadin-text-color-secondary);
+  background: var(--vaadin-background-container);
+}
