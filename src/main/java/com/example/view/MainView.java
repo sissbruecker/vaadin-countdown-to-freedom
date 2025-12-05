@@ -3,7 +3,7 @@ package com.example.view;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.components.HolidayGrid;
+import com.example.components.AllHolidaysCard;
 import com.example.components.HolidaySettings;
 import com.example.components.NextHolidayCard;
 import com.example.components.ThemeSwitcher;
@@ -14,11 +14,8 @@ import com.example.service.HolidayApiClient;
 import com.example.util.Helpers;
 
 import com.vaadin.flow.component.ComponentEffect;
-import com.vaadin.flow.component.card.Card;
-import com.vaadin.flow.component.card.CardVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -37,7 +34,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
     public MainView(HolidayApiClient holidayApiClient) {
         this.availableCountries = holidayApiClient.getAvailableCountries();
-        
+
         add(new ThemeSwitcher());
 
         Div container = new Div();
@@ -57,10 +54,9 @@ public class MainView extends Div implements HasUrlParameter<String> {
                 "flex-col",
                 "justify-end"
         );
-        H1 heading = new H1("Countdown to Freedom");
+        H1 heading = new H1("Is It a Day Off Yet?");
         heading.addClassName("text-xl");
         Paragraph paragraph = new Paragraph("When is the next public holiday?");
-
         HolidaySettings settings = new HolidaySettings(availableCountries);
 
         header.add(heading, paragraph, settings);
@@ -74,7 +70,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
                 "ease-out"
         );
         container.add(holidaysContainer);
-        
+
         add(container);
 
         // Compute holidays based on the current holiday query
@@ -120,36 +116,12 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
     private void renderHolidays(List<Holiday> holidays) {
         holidaysContainer.removeAll();
-
         if (holidays.isEmpty()) {
             return;
         }
 
-        renderNextHoliday(holidays);
-        renderAllHolidays(holidays);
-    }
-
-    private void renderNextHoliday(List<Holiday> holidays) {
         Optional<Holiday> nextHoliday = Helpers.findNextHoliday(holidays);
-
-        nextHoliday.ifPresent(holiday -> {
-            holidaysContainer.add(new NextHolidayCard(holiday));
-        });
-    }
-
-    private void renderAllHolidays(List<Holiday> holidays) {
-        H2 title = new H2("All Holidays");
-        title.addClassNames("p-4");
-
-        HolidayGrid grid = new HolidayGrid();
-        grid.setHolidays(holidays);
-        grid.getStyle().setBorderRadius("0").set("border", "none").set("border-top", "1px solid var(--vaadin-border-color-secondary)");
-
-        Card card = new Card();
-        card.addThemeVariants(CardVariant.AURA_ELEVATED);
-        card.addClassNames("p-0", "overflow-hidden");
-        card.add(title, grid);
-
-        holidaysContainer.add(card);
+        nextHoliday.ifPresent(holiday -> holidaysContainer.add(new NextHolidayCard(holiday)));
+        holidaysContainer.add(new AllHolidaysCard(holidays));
     }
 }

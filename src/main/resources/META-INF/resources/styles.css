@@ -8,7 +8,7 @@ html {
 }
 
 html[data-app-theme="yellow"] {
-  --aura-background-color-light: oklch(0.936 0.053 76.234);
+  --aura-background-color-light: oklch(0.934 0.047 77.641);
   --aura-accent-color-light: var(--aura-purple);
   --aura-accent-color-dark: var(--aura-purple);
 }
