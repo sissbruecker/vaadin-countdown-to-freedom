@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.model.Country;
 import com.example.model.Holiday;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,13 @@ public class HolidayApiClient {
     public List<Holiday> getPublicHolidays(int year, String countryCode) {
         return restClient.get()
                 .uri("/PublicHolidays/{year}/{countryCode}", year, countryCode)
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
+    }
+
+    public List<Country> getAvailableCountries() {
+        return restClient.get()
+                .uri("/AvailableCountries")
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {});
     }

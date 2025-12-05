@@ -10,6 +10,7 @@ This is a small demo project for displaying public holidays using Vaadin and Spr
 
 - Vaadin 25
 - Spring Boot 4
+- Tailwind 4 (Tailwind classes can be used directly in Vaadin Flow views without additional configuration)
 
 ## External APIs
 
