@@ -7,12 +7,17 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.router.Route;
 
 import java.time.Year;
 import java.util.stream.IntStream;
+
+import static com.vaadin.flow.component.Tag.H1;
 
 @Route("")
 public class MainView extends Div {
@@ -41,9 +46,8 @@ public class MainView extends Div {
         yearSelect.setWidth("150px");
 
         viewHolidaysButton = new Button("View Holidays");
-        viewHolidaysButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        viewHolidaysButton.addThemeVariants(ButtonVariant.AURA_PRIMARY);
         viewHolidaysButton.setEnabled(false);
-        viewHolidaysButton.addClassName("mt-6");
 
         countryComboBox.addValueChangeListener(event ->
             viewHolidaysButton.setEnabled(event.getValue() != null)
@@ -57,9 +61,15 @@ public class MainView extends Div {
             }
         });
 
-        HorizontalLayout controls = new HorizontalLayout(countryComboBox, yearSelect, viewHolidaysButton);
-        controls.addClassName("gap-4");
+        Div contents = new Div();
+        contents.setClassName("inline-flex flex-col");
+        H1 heading = new H1("Countdown to Freedom");
+        Paragraph paragraph = new Paragraph("When is the next public holiday?");
 
-        add(controls);
+        HorizontalLayout controls = new HorizontalLayout(countryComboBox, yearSelect, viewHolidaysButton);
+        controls.setClassName("gap-4 items-baseline");
+        
+        contents.add(heading, paragraph, controls);
+        add(contents);
     }
 }
