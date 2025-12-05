@@ -73,6 +73,7 @@ public class MainView extends Div implements HasUrlParameter<String> {
 
                 if (country.isPresent()) {
                     holidays = holidayApiClient.getPublicHolidays(year, countryCode);
+                    settings.setValues(country.get(), year);
                 }
             } catch (NumberFormatException e) {
                 // Invalid year parameter, ignore
