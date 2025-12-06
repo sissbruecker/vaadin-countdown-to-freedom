@@ -4,6 +4,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.page.WebStorage;
 
 public class ThemeSwitcher extends Div {
     public ThemeSwitcher() {
@@ -24,6 +25,7 @@ public class ThemeSwitcher extends Div {
     }
     
     private void switchTheme(String themeName) {
+        WebStorage.setItem(WebStorage.Storage.LOCAL_STORAGE, "app-theme", themeName);
         UI.getCurrentOrThrow().getElement().executeJs("document.documentElement.setAttribute('data-app-theme', $0);", themeName);
     }
 }
